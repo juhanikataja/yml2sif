@@ -50,15 +50,20 @@ def yml2sif(ymlfile,siffile):
     siffile.write(yml2sif_version())
     siffile.write('\n\n')
 
-    # find and print header first
+    # print matc definitions on top
+    siffile.writelines([ymldata['matc'], '\n'])
+
+    # next print header
     for key in ymldata.items():
         if (key[0].lower() == 'header'):
             write_sif_section(siffile, key)
             del ymldata[key[0]]
             break
 
+    # then print rest in random order
     for key in ymldata.items():
-        write_sif_section(siffile, key)
+        if not type(key[1]) is str:
+            write_sif_section(siffile, key)
 
 
 def __init__():
