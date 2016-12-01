@@ -3,20 +3,20 @@ Header:
 
 Simulation:
   'Max Output Level' : 10
-  'Coordinate System' : 'Cartesian'
-  'Simulation Type' : 'steady state'
+  'Coordinate System' : Cartesian
+  'Simulation Type' : steady state
 
-  'Timestep Sizes' : '$ 0.00101/8'
+  'Timestep Sizes' : $ 0.00101/8
   'Timestep Intervals': 50
 
-  'Timestepping Method' : 'BDF'
+  'Timestepping Method' : BDF
   'BDF Order': 1
   'Output Intervals': [1]
   'Steady State Max Iterations': 1
 
   'Mesh Levels': 1
   'Mesh Keep': 1
-  'Use Mesh Names': 'Logical False'
+  'Use Mesh Names': Logical False
 
 boundary condition 1:
   a: 'real 0'

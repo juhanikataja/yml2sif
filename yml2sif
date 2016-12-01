@@ -24,15 +24,21 @@ def write_sif_section(stream, key):
 
     indent += 1
     for sub in key[1].items():
-        write_indent(stream, indent*sw, [sub[0], ' = '])
-        indent += 1
         if not type(sub[1]) is list:
-            write_indent(stream, 0*indent*sw, [str(sub[1]), '\n'])
+            write_indent(stream, indent*sw, [sub[0], ' = '])
+            indent += 1
+            write_indent(stream, 0, [str(sub[1]), '\n'])
         else:
+            if sub[0].lower() == 'mesh db':
+                write_indent(stream, indent*sw, [sub[0], ' = '])
+            else:
+                write_indent(stream, indent*sw, [sub[0]+'('+str(len(sub[1]))+')', ' = '])
+
+            indent += 1
             data = [keytostr(x) for x in sub[1][0:-1]]
             data.append(" "+keytostr(sub[1][-1]))
             data.append('\n')
-            write_indent(stream, 0*indent*sw, data)
+            write_indent(stream, 0, data)
         indent -= 1
     indent -= 1
     stream.write('end\n\n')
