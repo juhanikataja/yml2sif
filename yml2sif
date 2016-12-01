@@ -1,0 +1,69 @@
+#!/usr/bin/python3
+
+import yaml, argparse, sys, os
+
+def yml2sif_version():
+    return '0.1'
+
+
+def keytostr(d):
+    if type(d) is str:
+        return "'"+d+"'"
+    else:
+        return str(d)
+
+def write_sif_section(stream, key):
+    sw = 2
+    def write_indent(stream, indent, data):
+        for i in range(0,indent):
+            stream.write(' ')
+        stream.writelines(data)
+
+    indent = 0
+    write_indent(stream, indent*sw, [key[0],'\n'])
+
+    indent += 1
+    for sub in key[1].items():
+        write_indent(stream, indent*sw, [sub[0], ' = '])
+        indent += 1
+        if not type(sub[1]) is list:
+            write_indent(stream, 0*indent*sw, [str(sub[1]), '\n'])
+        else:
+            data = [keytostr(x) for x in sub[1][0:-1]]
+            data.append(" "+keytostr(sub[1][-1]))
+            data.append('\n')
+            write_indent(stream, 0*indent*sw, data)
+        indent -= 1
+    indent -= 1
+    stream.write('end\n\n')
+
+def yml2sif(ymlfile,siffile):
+    ymldata = yaml.load(ymlfile.read())
+
+    siffile.write('! Generated with yml2sif version ')
+    siffile.write(yml2sif_version())
+    siffile.write('\n\n')
+
+    # find and print header first
+    for key in ymldata.items():
+        if (key[0].lower() == 'header'):
+            write_sif_section(siffile, key)
+            del ymldata[key[0]]
+            break
+
+    for key in ymldata.items():
+        write_sif_section(siffile, key)
+
+
+def __init__():
+    parser = argparse.ArgumentParser(description="Convert yml file to sif file assuming some structure.")
+    parser.add_argument('inputfile', metavar='inputfile', type=str, nargs=1, help='YAML file to be converted.')
+    parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
+    args = parser.parse_args()
+
+    ymlfile = open(args.inputfile[0], 'r')
+    siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
+
+    yml2sif(ymlfile, siffile)
+
+__init__()
