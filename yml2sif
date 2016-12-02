@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import yaml, argparse, sys, os
+import yaml, argparse, sys, os, textwrap
 
 def yml2sif_version():
     return '0.1'
@@ -67,7 +67,15 @@ def yml2sif(ymlfile,siffile):
 
 
 def __init__():
-    parser = argparse.ArgumentParser(description="Convert yml file to sif file assuming some structure.")
+    parser = argparse.ArgumentParser(
+            description=textwrap.dedent('''\
+                Convert yml file to sif file assuming some structure
+
+                Output order is the following:
+                  1. matc definitions
+                  2. header section
+                  3. rest of the sections and their contents in random order'''),
+            formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('inputfile', metavar='inputfile', type=str, nargs=1, help='YAML file to be converted.')
     parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
     args = parser.parse_args()
