@@ -1,0 +1,111 @@
+Header: 
+ Mesh DB: [".", "verkko.gid"]
+
+
+Simulation:
+  Max Output Level: 3
+  Coordinate System: String Cartesian 2D
+  Simulation Type: steady state
+  Steady State Max Iterations: 1
+  steady state min iterations: 1
+
+
+body 1:
+  material: 1
+  equation: 1
+
+material 1:
+  density: real 1
+  youngs modulus: real 1
+  poisson ratio: real 0.3
+
+equation 1:
+  active solvers: [1,2,3]
+  plane stress: FALSE
+
+solver 1:
+  Equation: '"Crack Propagation"'
+  Procedure: '"StressSolve" "StressSolver"'
+  Variable: String "Shape Displacement"
+  Variable DOFs: Integer 2
+  Calculate Stresses: TRUE
+  Displace Mesh: Logical FALSE
+  Linear System Solver: Direct
+  Linear System Symmetric: Logical True
+  Linear System Scaling: Logical False
+  Linear System Iterative Method: BiCGStab
+  Linear System Direct Method: UMFPACK
+  Linear System Convergence Tolerance: 1.0e-8
+  Linear System Max Iterations: 200
+  Linear System Preconditioning: ILU2
+  Nonlinear System Convergence Tolerance: 1.0e-7
+  Nonlinear System Max Iterations: 1
+  Nonlinear System Relaxation Factor: 1
+  Steady State Convergence Tolerance: 1.0e-6
+  Optimize Bandwidth: True
+
+solver 2:
+  Equation: '"Elasticity Analysis"'
+  Procedure: '"StressSolve" "StressSolver"'
+  Variable: String "True Displacement"
+  Variable DOFs: Integer 2
+  Time Derivative Order: 2
+
+  Calculate Stresses: TRUE
+  Displace Mesh: Logical FALSE
+ 
+  Linear System Solver: Direct
+  Linear System Symmetric: Logical True
+  Linear System Scaling: Logical False
+  Linear System Direct Method: UMFPACK
+  Linear System Iterative Method: BiCGStab
+  Linear System Convergence Tolerance: 1.0e-8
+  Linear System Max Iterations: 200
+  Linear System Preconditioning: ILU2
+
+  Nonlinear System Convergence Tolerance: 1.0e-7
+  Nonlinear System Max Iterations: 1
+  Nonlinear System Relaxation Factor: 1
+
+  Steady State Convergence Tolerance: 1.0e-6
+
+  Optimize Bandwidth: True
+
+solver 3:
+  equation: '"compute energy release rate"'
+  procedure: '"EnergyRelease" "ReleaseRateSolver"'
+
+boundary condition 1:
+  true displacement 1: real 0
+  true displacement 2: real 0
+  target boundaries: [1]
+  shape displacement 1: real 0
+  shape displacement 2: real 0
+
+boundary condition 2:
+  target boundaries: [2]
+  shape displacement 1: real 0
+  shape displacement 2: real 0
+
+boundary condition 3:
+  target boundaries: [3]
+  normal force: real 1.0
+  shape displacement 1: real 0
+  shape displacement 2: real 0
+
+boundary condition 4:
+  target boundaries: [4]
+  shape displacement 1: real 0
+  shape displacement 2: real 0
+
+boundary condition 5:
+  target boundaries: [5]
+  shape displacement 1: "Variable Coordinate 1; real; 0 0 ; 5 1; End"
+  shape displacement 2: real 0
+
+epilog: |
+  Solver 2 :: Reference Norm = Real 21.9639953451
+  Solver 2 :: Reference Norm Tolerance = Real 1e-4
+  $fprintf( stderr, "TEST CASE 1\n");
+  RUN
+  $fprintf( stderr, "END TEST CASE 1: Target NRM=21.9639953451,EPS=1e-4\n" );

@@ -8,7 +8,7 @@ def yml2sif_version():
 
 def keytostr(d):
     if type(d) is str:
-        return "'"+d+"'"
+        return '"'+d+'"'
     else:
         return str(d)
 
@@ -30,13 +30,13 @@ def write_sif_section(stream, key):
             write_indent(stream, 0, [str(sub[1]), '\n'])
         else:
             if sub[0].lower() == 'mesh db':
-                write_indent(stream, indent*sw, [sub[0], ' = '])
+                write_indent(stream, indent*sw, [sub[0], ' '])
             else:
                 write_indent(stream, indent*sw, [sub[0]+'('+str(len(sub[1]))+')', ' = '])
 
             indent += 1
-            data = [keytostr(x) for x in sub[1][0:-1]]
-            data.append(" "+keytostr(sub[1][-1]))
+            data = [keytostr(x)+" " for x in sub[1][0:-1]]
+            data.append(keytostr(sub[1][-1]))
             data.append('\n')
             write_indent(stream, 0, data)
         indent -= 1
