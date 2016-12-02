@@ -43,25 +43,24 @@ def write_sif_section(stream, key):
     indent -= 1
     stream.write('end\n\n')
 
-def yml2sif(ymlfile,siffile):
-    ymldata = yaml.load(ymlfile.read())
+def dict_to_sif(sifdict,siffile):
 
     siffile.write('! Generated with yml2sif version ')
     siffile.write(yml2sif_version())
     siffile.write('\n\n')
 
     # print matc definitions on top
-    siffile.writelines([ymldata['matc'], '\n'])
+    siffile.writelines([sifdict['matc'], '\n'])
 
     # next print header
-    for key in ymldata.items():
+    for key in sifdict.items():
         if (key[0].lower() == 'header'):
             write_sif_section(siffile, key)
-            del ymldata[key[0]]
+            del sifdict[key[0]]
             break
 
     # then print rest in random order
-    for key in ymldata.items():
+    for key in sifdict.items():
         if not type(key[1]) is str:
             write_sif_section(siffile, key)
 
@@ -83,6 +82,7 @@ def __init__():
     ymlfile = open(args.inputfile[0], 'r')
     siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
-    yml2sif(ymlfile, siffile)
+    ymldata = yaml.load(ymlfile.read())
+    dict_to_sif(ymldata, siffile)
 
 __init__()
