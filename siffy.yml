@@ -23,4 +23,7 @@ Simulation:
   Use Mesh Names: Logical False
 
 boundary condition 1:
-  a: real 0
+  temperature: real 0
+
+epilog: |
+  ! This is just an epilog, appended to end of sif file

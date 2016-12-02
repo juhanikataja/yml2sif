@@ -50,7 +50,10 @@ def dict_to_sif(sifdict,siffile):
     siffile.write('\n\n')
 
     # print matc definitions on top
-    siffile.writelines([sifdict['matc'], '\n'])
+    try:
+        siffile.writelines([sifdict['matc'], '\n'])
+    except KeyError as ke:
+        pass
 
     # next print header
     for key in sifdict.items():
@@ -65,24 +68,30 @@ def dict_to_sif(sifdict,siffile):
             write_sif_section(siffile, key)
 
 
+    try:
+        siffile.writelines([sifdict['epilog'], '\n'])
+    except KeyError as ke:
+        pass
+
+
 def __init__():
-    parser = argparse.ArgumentParser(
-            description=textwrap.dedent('''\
-                Convert yml file to sif file assuming some structure
+  parser = argparse.ArgumentParser(
+      description=textwrap.dedent('''\
+          Convert yml file to sif file assuming some structure
 
-                Output order is the following:
-                  1. matc definitions
-                  2. header section
-                  3. rest of the sections and their contents in random order'''),
-            formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('inputfile', metavar='inputfile', type=str, nargs=1, help='YAML file to be converted.')
-    parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
-    args = parser.parse_args()
+          Output order is the following:
+            1. matc definitions
+            2. header section
+            3. rest of the sections and their contents in random order'''),
+      formatter_class=argparse.RawDescriptionHelpFormatter)
+  parser.add_argument('inputfile', metavar='inputfile', type=str, nargs=1, help='YAML file to be converted.')
+  parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
+  args = parser.parse_args()
 
-    ymlfile = open(args.inputfile[0], 'r')
-    siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
+  ymlfile = open(args.inputfile[0], 'r')
+  siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
-    ymldata = yaml.load(ymlfile.read())
-    dict_to_sif(ymldata, siffile)
+  ymldata = yaml.load(ymlfile.read())
+  dict_to_sif(ymldata, siffile)
 
 __init__()
