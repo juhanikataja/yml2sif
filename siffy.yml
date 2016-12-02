@@ -27,3 +27,8 @@ boundary condition 1:
 
 epilog: |
   ! This is just an epilog, appended to end of sif file
+
+unused: |
+  Because field is not named epilog nor matc and it is
+  of atomic data type it will not be passed to sif file as
+  a section.
