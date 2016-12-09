@@ -27,7 +27,7 @@ setup(name='yml2sif',
       install_requires=['pyyaml','argparse'],
       packages=['yml2sif'],
       entry_points={
-          'console_sripts': [
-              'yml_to_sif = yml2sif:__init__.main',],})
+          'console_scripts': [
+              'yml2sif = yml2sif:__init__.main',],})
 
 
