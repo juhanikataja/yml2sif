@@ -28,6 +28,6 @@ setup(name='yml2sif',
       packages=find_packages(),
       entry_points={
           'console_sripts': [
-              'yml2sif = ymlsif:main']})
+              'yml2sif = yml2sif:main']})
 
 
