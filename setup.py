@@ -1,5 +1,4 @@
 """yml2sif setup module
-
 """
 
 from setuptools import setup, find_packages
@@ -28,6 +27,6 @@ setup(name='yml2sif',
       packages=['yml2sif'],
       entry_points={
           'console_scripts': [
-              'yml2sif = yml2sif:__init__.main',],})
+              'yml2sif = yml2sif:main',],})
 
 
