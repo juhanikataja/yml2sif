@@ -25,9 +25,9 @@ setup(name='yml2sif',
         'Programming Language :: Python :: 3',],
       keywords='science yml sif helper',
       install_requires=['pyyaml','argparse'],
-      packages=find_packages(),
+      packages=['yml2sif'],
       entry_points={
           'console_sripts': [
-              'yml2sif = yml2sif:main']})
+              'yml_to_sif = yml2sif:__init__.main',],})
 
 
