@@ -3,8 +3,7 @@
 import yaml, argparse, sys, os, textwrap
 
 def yml2sif_version():
-    return '0.1'
-
+    return '0.1.0'
 
 def keytostr(d):
     if type(d) is str:
@@ -49,9 +48,9 @@ def dict_to_sif(sifdict,siffile):
     siffile.write(yml2sif_version())
     siffile.write('\n\n')
 
-    # print matc definitions on top
+    # print prologue definitions on top
     try:
-        siffile.writelines([sifdict['matc'], '\n'])
+        siffile.writelines([sifdict['prologue'], '\n'])
     except KeyError as ke:
         pass
 
@@ -69,18 +68,18 @@ def dict_to_sif(sifdict,siffile):
 
 
     try:
-        siffile.writelines([sifdict['epilog'], '\n'])
+        siffile.writelines([sifdict['epilogue'], '\n'])
     except KeyError as ke:
         pass
 
 
-def __init__():
+def main():
   parser = argparse.ArgumentParser(
       description=textwrap.dedent('''\
           Convert yml file to sif file assuming some structure
 
           Output order is the following:
-            1. matc definitions
+            1. prologue definitions
             2. header section
             3. rest of the sections and their contents in random order'''),
       formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -93,5 +92,3 @@ def __init__():
 
   ymldata = yaml.load(ymlfile.read())
   dict_to_sif(ymldata, siffile)
-
-__init__()

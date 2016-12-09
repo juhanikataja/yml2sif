@@ -103,7 +103,7 @@ boundary condition 5:
   shape displacement 1: "Variable Coordinate 1; real; 0 0 ; 5 1; End"
   shape displacement 2: real 0
 
-epilog: |
+epilogue: |
   Solver 2 :: Reference Norm = Real 21.9639953451
   Solver 2 :: Reference Norm Tolerance = Real 1e-4
   $fprintf( stderr, "TEST CASE 1\n");
