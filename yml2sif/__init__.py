@@ -78,6 +78,10 @@ def main():
       description=textwrap.dedent('''\
           Convert yml file to sif file assuming some structure
 
+          Copyright (c) 2016 CSC - IT Center for Science
+
+          Usage:
+
           Output order is the following:
             1. prologue definitions
             2. header section
