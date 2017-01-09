@@ -3,7 +3,7 @@
 import yaml, argparse, sys, os, textwrap, collections
 
 def yml2sif_version():
-    return '0.1.0'
+    return '0.2.0'
 
 def keytostr(d):
     if type(d) is str:
