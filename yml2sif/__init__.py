@@ -91,7 +91,7 @@ def main():
   parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
   args = parser.parse_args()
 
-  ymlfile = open(args.inputfile[0], 'r')
+  ymlfile = open(args.inputfile[0], 'r') if args.inputfile[0] != '-' else sys.stdin
   siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
   # This trick is from 
