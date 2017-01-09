@@ -11,7 +11,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='yml2sif',
-      version='0.1.0', 
+      version='0.2.0', 
       long_description=long_description,
       description='YAML to sif translator.',
       url='https://github.com/CSC-IT-Center-for-science/yml2sif',
