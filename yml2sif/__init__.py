@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import yaml, argparse, sys, os, textwrap
+import yaml, argparse, sys, os, textwrap, collections
 
 def yml2sif_version():
     return '0.1.0'
@@ -90,5 +90,19 @@ def main():
   ymlfile = open(args.inputfile[0], 'r')
   siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
+  # This trick is from 
+  # http://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-mappings-as-ordereddicts
+  _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
+  def dict_representer(dumper,data):
+      return dumper.represent_dict(data.items())
+
+  def dict_constructor(loader, node):
+      return collections.OrderedDict(loader.construct_pairs(node))
+
+  yaml.add_representer(collections.OrderedDict, dict_representer)
+  yaml.add_constructor(_mapping_tag, dict_constructor)
+  # Trick ends
+
   ymldata = yaml.load(ymlfile.read())
+
   dict_to_sif(ymldata, siffile)
