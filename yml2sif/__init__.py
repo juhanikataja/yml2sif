@@ -72,6 +72,17 @@ def dict_to_sif(sifdict,siffile):
     except KeyError as ke:
         pass
 
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=collections.OrderedDict):
+    """Ordered loader for yaml from http://stackoverflow.com/a/21912744"""
+    class OrderedLoader(Loader):
+        pass
+    def construct_mapping(loader, node):
+        loader.flatten_mapping(node)
+        return object_pairs_hook(loader.construct_pairs(node))
+    OrderedLoader.add_constructor(
+        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+        construct_mapping)
+    return yaml.load(stream, OrderedLoader)
 
 def main():
   parser = argparse.ArgumentParser(
@@ -94,19 +105,5 @@ def main():
   ymlfile = open(args.inputfile[0], 'r') if args.inputfile[0] != '-' else sys.stdin
   siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
-  # This trick is from 
-  # http://stackoverflow.com/questions/5121931/in-python-how-can-you-load-yaml-mappings-as-ordereddicts
-  _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
-  def dict_representer(dumper,data):
-      return dumper.represent_dict(data.items())
-
-  def dict_constructor(loader, node):
-      return collections.OrderedDict(loader.construct_pairs(node))
-
-  yaml.add_representer(collections.OrderedDict, dict_representer)
-  yaml.add_constructor(_mapping_tag, dict_constructor)
-  # Trick ends
-
-  ymldata = yaml.load(ymlfile.read())
-
+  ymldata = ordered_load(ymlfile.read(), yaml.SafeLoader)
   dict_to_sif(ymldata, siffile)
