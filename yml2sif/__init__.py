@@ -2,8 +2,10 @@
 
 import yaml, argparse, sys, os, textwrap, collections
 
+__dict_type__=collections.OrderedDict
+
 def yml2sif_version():
-    return '0.2.1'
+    return '0.2.2'
 
 def keytostr(d):
     if type(d) is str:
@@ -63,16 +65,15 @@ def dict_to_sif(sifdict,siffile):
 
     # then print rest in random order
     for key in sifdict.items():
-        if not type(key[1]) is str:
+        if type(key[1]) is __dict_type__:
             write_sif_section(siffile, key)
-
 
     try:
         siffile.writelines([sifdict['epilogue'], '\n'])
     except KeyError as ke:
         pass
 
-def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=collections.OrderedDict):
+def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=__dict_type__):
     """Ordered loader for yaml from http://stackoverflow.com/a/21912744"""
     class OrderedLoader(Loader):
         pass
