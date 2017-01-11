@@ -5,7 +5,51 @@ import yaml, argparse, sys, os, textwrap, collections
 __dict_type__=collections.OrderedDict
 
 def yml2sif_version():
-    return '0.2.2'
+    return '0.2.3'
+
+class Integer(yaml.YAMLObject):
+    yaml_tag =u'!Integer'
+    def __init__(self, data):
+        if type(data) is list:
+            self.data = [int(x) for x in data]
+            self.len = len(data)
+        else:
+            self.data = int(data)
+            self.len = 0
+
+    def __repr__(self):
+        if type(self.data) is list and type(self.data[0]) is int:
+            s = "Integer"
+            for k in self.data:
+                s += ' '+keytostr(k)
+            return(s)
+        else:
+            s = "Integer " + keytostr(self.data)
+            return(s)
+            
+
+class Real(yaml.YAMLObject):
+
+    yaml_tag =u'!Real'
+
+    def __init__(self, data):
+        if type(data) is list:
+            self.data = [float(x) for x in data]
+            self.len = len(data)
+        else:
+            self.data = float(data)
+            self.len = 0
+
+    def __repr__(self):
+        if type(self.data) is list and type(self.data[0]) is float:
+            s = "Real"
+            for k in self.data:
+                s += ' '+keytostr(k)
+            return(s)
+        else:
+            s = "Real " + keytostr(self.data)
+            return(s)
+
 
 def keytostr(d):
     if type(d) is str:
@@ -25,21 +69,29 @@ def write_sif_section(stream, key):
 
     indent += 1
     for sub in key[1].items():
-        if not type(sub[1]) is list:
-            write_indent(stream, indent*sw, [sub[0], ' = '])
-            indent += 1
-            write_indent(stream, 0, [str(sub[1]), '\n'])
-        else:
+        if type(sub[1]) is list:
             if sub[0].lower() == 'mesh db':
                 write_indent(stream, indent*sw, [sub[0], ' '])
             else:
                 write_indent(stream, indent*sw, [sub[0]+'('+str(len(sub[1]))+')', ' = '])
 
-            indent += 1
             data = [keytostr(x)+" " for x in sub[1][0:-1]]
             data.append(keytostr(sub[1][-1]))
             data.append('\n')
             write_indent(stream, 0, data)
+            indent += 1
+        elif type(sub[1]) is Integer or type(sub[1]) is Real:
+            if sub[1].len > 0:
+                write_indent(stream, indent*sw, [sub[0]+'('+str(sub[1].len)+')', ' = '])
+            else:
+                write_indent(stream, [indent*sw, sub[0], ' = '])
+            write_indent(stream, 0, [str(sub[1]), '\n'])
+            indent += 1
+        else:
+            write_indent(stream, indent*sw, [sub[0], ' = '])
+            indent += 1
+            write_indent(stream, 0, [str(sub[1]), '\n'])
+
         indent -= 1
     indent -= 1
     stream.write('end\n\n')
@@ -80,9 +132,27 @@ def ordered_load(stream, Loader=yaml.Loader, object_pairs_hook=__dict_type__):
     def construct_mapping(loader, node):
         loader.flatten_mapping(node)
         return object_pairs_hook(loader.construct_pairs(node))
+
+    def construct_Integer(loader,node):
+        data = loader.construct_sequence(node)
+        return Integer(data)
+
+    def construct_Real(loader,node):
+        data = loader.construct_sequence(node)
+        return Real(data)
+
+    OrderedLoader.add_constructor(
+            u'!Integer',
+            construct_Integer)
+
+    OrderedLoader.add_constructor(
+            u'!Real',
+            construct_Real)
+
     OrderedLoader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
         construct_mapping)
+
     return yaml.load(stream, OrderedLoader)
 
 def main():
@@ -108,3 +178,6 @@ def main():
 
   ymldata = ordered_load(ymlfile.read(), yaml.SafeLoader)
   dict_to_sif(ymldata, siffile)
+
+if __name__  == '__main__':
+    main()
