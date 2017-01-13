@@ -3,9 +3,10 @@
 import yaml, argparse, sys, os, textwrap, collections
 
 __dict_type__=collections.OrderedDict
+__default_sw__=2
 
 def yml2sif_version():
-    return '0.2.3'
+    return '0.2.4'
 
 class Integer(yaml.YAMLObject):
     yaml_tag =u'!Integer'
@@ -57,12 +58,13 @@ def keytostr(d):
     else:
         return str(d)
 
+def write_indent(stream, indent, data):
+    for i in range(0,indent):
+        stream.write(' ')
+    stream.writelines(data)
+
 def write_sif_section(stream, key):
-    sw = 2
-    def write_indent(stream, indent, data):
-        for i in range(0,indent):
-            stream.write(' ')
-        stream.writelines(data)
+    sw = __default_sw__
 
     indent = 0
     write_indent(stream, indent*sw, [key[0],'\n'])
@@ -111,7 +113,12 @@ def dict_to_sif(sifdict,siffile):
     # next print header
     for key in sifdict.items():
         if (key[0].lower() == 'header'):
-            write_sif_section(siffile, key)
+            if type(key[1]) is list:
+                for K in key[1]:
+                    write_indent(siffile, __default_sw__, [K,'\n'])
+                siffile.write('\n')
+            else:
+                write_sif_section(siffile, key)
             del sifdict[key[0]]
             break
 
@@ -171,12 +178,18 @@ def main():
       formatter_class=argparse.RawDescriptionHelpFormatter)
   parser.add_argument('inputfile', metavar='inputfile', type=str, nargs=1, help='YAML file to be converted.')
   parser.add_argument('outputfile', metavar='outputfile', type=str, nargs='?', help='If omitted, output is to stdout.')
+  parser.add_argument('-k', '--key', metavar='key', type=str, help='print contents of ``key``.') 
   args = parser.parse_args()
 
   ymlfile = open(args.inputfile[0], 'r') if args.inputfile[0] != '-' else sys.stdin
   siffile = sys.stdout if args.outputfile == None else open(args.outputfile, 'w')
 
   ymldata = ordered_load(ymlfile.read(), yaml.SafeLoader)
+  
+  if args.key != None:
+      siffile.write(ymldata[args.key])
+      exit(1)
+
   dict_to_sif(ymldata, siffile)
 
 if __name__  == '__main__':
