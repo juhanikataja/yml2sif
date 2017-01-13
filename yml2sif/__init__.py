@@ -6,7 +6,7 @@ __dict_type__=collections.OrderedDict
 __default_sw__=2
 
 def yml2sif_version():
-    return '0.2.4'
+    return '0.2.4b1'
 
 class Integer(yaml.YAMLObject):
     yaml_tag =u'!Integer'
@@ -114,9 +114,10 @@ def dict_to_sif(sifdict,siffile):
     for key in sifdict.items():
         if (key[0].lower() == 'header'):
             if type(key[1]) is list:
+                siffile.write('Header\n')
                 for K in key[1]:
                     write_indent(siffile, __default_sw__, [K,'\n'])
-                siffile.write('\n')
+                siffile.write('End\n\n')
             else:
                 write_sif_section(siffile, key)
             del sifdict[key[0]]
@@ -188,7 +189,7 @@ def main():
   
   if args.key != None:
       siffile.write(ymldata[args.key])
-      exit(1)
+      exit(0)
 
   dict_to_sif(ymldata, siffile)
 
